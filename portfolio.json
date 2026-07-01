@@ -1,0 +1,11 @@
+{
+    "cash": 4025801.6,
+    "portfolio": [
+        {
+            "current_price": null,
+            "purchase_price": 77.54,
+            "shares": 100,
+            "ticker": "SHEL"
+        }
+    ]
+}
