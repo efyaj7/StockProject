@@ -65,8 +65,10 @@ class Stock:
     def calculate_percentage(self) :
 
         if self.current_price is None:
-
             # return essentially brwaks out of the function so no code after that point is executed
+            return None
+
+        if self.purchase_price == 0:
             return None
 
         return round(((self.current_price - self.purchase_price) /self.purchase_price) * 100 , 2)

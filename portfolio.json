@@ -1,11 +1,37 @@
 {
-    "cash": 4025801.6,
+    "cash": 4011358.1700000004,
     "portfolio": [
         {
-            "current_price": null,
+            "current_price": 91.98,
+            "p/l(\u00a3)": 1444.0,
+            "percentage %": 18.62,
             "purchase_price": 77.54,
             "shares": 100,
             "ticker": "SHEL"
+        },
+        {
+            "current_price": 7489.72,
+            "p/l(\u00a3)": 867.85,
+            "percentage %": 2.37,
+            "purchase_price": 7316.15,
+            "shares": 5,
+            "ticker": "^GSPC"
+        },
+        {
+            "current_price": 1867.0,
+            "p/l(\u00a3)": -503.7,
+            "percentage %": -2.63,
+            "purchase_price": 1917.37,
+            "shares": 10,
+            "ticker": "ETH-USD"
+        },
+        {
+            "current_price": 308.91,
+            "p/l(\u00a3)": -1464.0,
+            "percentage %": -8.66,
+            "purchase_price": 338.19,
+            "shares": 50,
+            "ticker": "AAPL"
         }
     ]
 }

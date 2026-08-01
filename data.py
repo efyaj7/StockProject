@@ -52,7 +52,7 @@ class DataManager :
 
     def __init__(self ,filename = "portfolio.json" ):
         self.filename = filename
-        self.api_key = "CA919FAR8VTFO7CL"
+       
 
 
 
@@ -72,7 +72,7 @@ class DataManager :
 
 
                 return data["cash"] , data["portfolio"]
-        except FileNotFoundError :
+        except (FileNotFoundError , json.JSONDecodeError):
             return 0,[]
     def fetch_price(self , stock_ticker):
         try :
@@ -81,15 +81,17 @@ class DataManager :
             # remember iloc is used in pandas to find the index
             # this represents the table of values today
 
-
             # now as dataframes are similar to dictionaries you would access the same way
             # as a key value pair
 
             prices = round(float(specific_price["Close"]),2)
 
             return prices
-        except (IndexError , Exception) :
+        except IndexError  :
             print(f"Error fetching price for {stock_ticker}")
+            return None
+        except Exception as e:
+            print(f"An error occurred: {e}")
             return None
 
     def fetch_historical_price(self , stock_ticker):
@@ -105,8 +107,11 @@ class DataManager :
             prices = round(float(specific_price["Close"]) , 2)
 
             return prices
-        except (IndexError, Exception):
+        except IndexError:
             print(f"Error fetching price for {stock_ticker}")
+            return None
+        except Exception as e:
+            print(f"An error occurred: {e}")
             return None
 
 

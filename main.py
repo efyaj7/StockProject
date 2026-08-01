@@ -41,10 +41,16 @@ def main():
                     continue
 
                 purchase_price = portfolio.data.fetch_historical_price(ticker)
+                # this fetches the data from 3 days ago and returns the closing price of that day
 
-                if purchase_price is None:
+                if purchase_price is None: 
+                    # if the purchase price is None then that means that the stock ticker is invalid and there is no data for it
                     print("there is no data")
+                    # prints out a message to the user that there is no data for the stock ticker       
+
                     continue
+                    # the continue skips the next step ad goes back to the start of the while loop so that 
+                    # the user can try again with a different stock ticker 
 
                 print(f"current price of {ticker} : {purchase_price}")
 
@@ -92,6 +98,10 @@ def main():
             case 5:
                 print("thank you for using this have a nice day")
                 break
+
+            case _:
+                print("this is not a valid choice please choose a number between 1 and 5")
+                continue
 
 
 

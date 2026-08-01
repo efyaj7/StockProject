@@ -65,15 +65,27 @@ class Portfolio :
 
         self.stocks = [] # []
         for loaded in data :
+            if loaded["shares"] == 0:
+                continue
+            # skips zero-share entries left over in the JSON from before a fix
+            # existed, so old zombie rows don't come back on every startup
             self.stocks.append(Stock(loaded["ticker"] , loaded["shares"] , loaded["purchase_price"] , loaded["current_price"]))
 
 
 
     def add_stock(self , ticker , shares ):
 
+        if shares <= 0:
+            print("number of shares must be greater than zero")
+            return
+        
+
         purchase_price = self.data.fetch_historical_price(ticker)
 
         price_to_check = self.data.fetch_price(ticker)
+
+        # these if sttaements happen before the stock object is created because you want to make sure that the stock object is only created if the data is valid and the user has enough money to purchase the stock
+        # insted of elif i used if as i want to check for all the conditions and not just one of them
 
         if purchase_price is None:
             print("could not fetch historical price")
@@ -82,6 +94,7 @@ class Portfolio :
         if price_to_check is None:
             print("could not fetch current price")
 
+      
         today_price = price_to_check if price_to_check is not None else purchase_price
         # guarantees current_price is never left blank - falls back to the price we
         # already have (purchase_price) if the live fetch failed
@@ -154,6 +167,11 @@ class Portfolio :
 
     def remove_stock(self,ticker , shares): 
 
+        if shares <= 0:
+            print(" number of shares to sell must be greater than zero")
+            return
+        
+
         found = False
 
         # mathing stack is just going to be stock objects found
@@ -171,9 +189,24 @@ class Portfolio :
                     return
                 # checks whether tne ticker that you are trying to access is the same as the one found in the 
                 # Stock object within the self.stocks list
-               
+
+
+                if matching_stack.current_price is None:
+                    # if this is the case then you cannot sell the stock object as you do not know what the current price is
+                    print(f"current price for {ticker} is not available, cannot sell")
+                    # return essentially breaks out of the function so no code after that point is executed
+                    return
+
+                # if the current price is None then you cannot sell the stock object as you do not know what the current price is
+
+                
                 # updated the current price of the stock object to the live price that was fetched from the API
-                cash_received = matching_stack.current_price * matching_stack.shares 
+                cash_received = matching_stack.current_price * shares
+                # this is the amount of cash that you would receive from selling the stock object
+                # this is the amount of cash that you would receive from selling the stock object 
+                # that was found within the self.stocks list
+
+               
                
                 self.cash += cash_received
                 print(self.cash)
@@ -184,7 +217,14 @@ class Portfolio :
                 break
 
 
+
+
         if found :
+            if matching_stack.shares == 0:
+                self.stocks.remove(matching_stack)
+            else :
+                print(f"{shares} shares of {ticker} sold - {matching_stack.shares} remaining")
+
             portfolio_data = [stock.to_dict() for stock in self.stocks]
             self.data.save_price(portfolio_data , self.cash)
             print(f"{ticker} succesfully sold")
@@ -258,7 +298,7 @@ class Portfolio :
             return
 
         for w in self.stocks :
-            print(w.ticker)
+            print(f"{w.ticker}: {w.shares} shares")
 
 
 
