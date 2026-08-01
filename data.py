@@ -76,15 +76,36 @@ class DataManager :
             return 0,[]
     def fetch_price(self , stock_ticker):
         try :
-            url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={stock_ticker}&apikey={self.api_key}"
+            stock = yfinance.Ticker(stock_ticker)
+            specific_price  = stock.history(period="1d").iloc[-1]
+            # remember iloc is used in pandas to find the index
+            # this represents the table of values today
 
-            responce = requests.get(url)
-            data = responce.json()
 
-            price = float(data["Global Quote"]["05. price"])
+            # now as dataframes are similar to dictionaries you would access the same way
+            # as a key value pair
 
-            return price
-        except (requests.exceptions.RequestException, KeyError) :
+            prices = round(float(specific_price["Close"]),2)
+
+            return prices
+        except (IndexError , Exception) :
+            print(f"Error fetching price for {stock_ticker}")
+            return None
+
+    def fetch_historical_price(self , stock_ticker):
+        try:
+
+            stock = yfinance.Ticker(stock_ticker)
+            specific_price = stock.history(period="3d").iloc[0]
+            # this represents the d table of values today
+
+            # now as dataframes are similar to dictionaries you would access the same way
+            # as a key value pair
+
+            prices = round(float(specific_price["Close"]) , 2)
+
+            return prices
+        except (IndexError, Exception):
             print(f"Error fetching price for {stock_ticker}")
             return None
 
@@ -92,5 +113,24 @@ class DataManager :
 
 
 
+"""""
+Now your next steps:
+Step 1 — Create fetch_historical_price() method
 
+Same structure as fetch_price()
+But instead of period="1d" — fetch a specific date range covering a few days back
+Return the closing price from a few days ago as the purchase price
 
+Step 2 — Update add_stock() in Portfolio
+
+Remove purchase_price as a parameter
+Call self.data.fetch_historical_price(ticker, 3) internally instead
+Use the returned price as purchase_price
+
+Step 3 — Update main.py Case 1
+
+Remove the manual price fetch and display
+Just ask for ticker and shares
+Let add_stock() handle everything internally
+
+"""

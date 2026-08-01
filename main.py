@@ -1,10 +1,16 @@
 
 
+import re
+
 from Portfolio import Portfolio
+
+TICKER_PATTERN = re.compile(r"^\^?[A-Z]+([.-][A-Z]+)?$")
+# allows an optional leading ^ for indices (e.g. ^GSPC) and an optional
+# .LETTERS or -LETTERS suffix for share classes (e.g. BRK.B) or crypto pairs (e.g. BTC-USD)
 
 def main():
 
-    portfolio = Portfolio()
+    portfolio = Portfolio() 
 
 
 
@@ -18,18 +24,23 @@ def main():
                   "4. View Portfolio\n"
                   "5. Exit"))
         except ValueError :
-            print("this is not correct")
+            print("this is not a valid choice please choose a number between 1 and 5")
             continue
 
         match choices :
             case 1 :
-                ticker = input("provide the stock ticker").upper().strip()
 
-                if  not ticker.isalpha() :
-                    print("this is incorrect")
+                try : 
+                    ticker = input("provide the stock ticker").upper().strip()
+
+                    if not TICKER_PATTERN.match(ticker) :
+                        print("this is not a valid ticker")
+                        continue
+                except ValueError :
+                    print("the ticker has to be a string")
                     continue
 
-                purchase_price = portfolio.data.fetch_price(ticker)
+                purchase_price = portfolio.data.fetch_historical_price(ticker)
 
                 if purchase_price is None:
                     print("there is no data")
@@ -46,20 +57,38 @@ def main():
                     print("this has to be a number")
                     continue
 
-                portfolio.add_stock(ticker , share_amount, purchase_price)
-
-
+                portfolio.add_stock(ticker , share_amount)
 
             case 2:
 
                 portfolio.list_tickers()
-                remove_stock = input("which stock would you like to remove").upper().strip()
 
-                portfolio.remove_stock(remove_stock)
+                
+                try :
+                    remove_stock = input("which stock would you like to remove").upper().strip()
+                except ValueError:
+                    print("this has to be a string")
+                    continue
+
+
+                try :
+                    num_of_shares = int(input("how many shares would you like to sell").strip())
+                except ValueError:
+                    print("this has to be a number")
+                    continue
+
+
+                # this is going to be the number of shares that the user wants to sell from the stock that 
+                # they want to remove
+
+                
+
+                portfolio.remove_stock(remove_stock , num_of_shares)
             case 3:
                 portfolio.refresh_stock()
             case 4:
                 portfolio.display()
+
             case 5:
                 print("thank you for using this have a nice day")
                 break
